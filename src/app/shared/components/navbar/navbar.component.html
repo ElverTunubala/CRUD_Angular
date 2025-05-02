@@ -1,38 +1,38 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" routerLink="/">Angular CRUD</a>
-      <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" [class.show]="!isCollapsed">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/products" routerLinkActive="active">Products</a>
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/">Angular CRUD</a>
+    <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" [class.show]="!isCollapsed">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/products" routerLinkActive="active">Products</a>
+        </li>
+        <li class="nav-item" *ngIf="(authService.currentUser$ | async)?.role === 'admin'">
+          <a class="nav-link" routerLink="/products/new" routerLinkActive="active">Add Product</a>
+        </li>
+      </ul>
+      <div class="d-flex">
+        <ul class="navbar-nav">
+          <li class="nav-item" *ngIf="!(authService.isLoggedIn$ | async)">
+            <a class="nav-link" routerLink="/auth/login" routerLinkActive="active">Login</a>
           </li>
-          <li class="nav-item" *ngIf="authService.isAdmin()">
-            <a class="nav-link" routerLink="/products/new" routerLinkActive="active">Add Product</a>
+          <li class="nav-item" *ngIf="!(authService.isLoggedIn$ | async)">
+            <a class="nav-link" routerLink="/auth/register" routerLinkActive="active">Register</a>
+          </li>
+          <li class="nav-item dropdown" *ngIf="authService.isLoggedIn$ | async">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+              {{ (authService.currentUser$ | async)?.name }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
+            </ul>
           </li>
         </ul>
-        <div class="d-flex">
-          <ul class="navbar-nav">
-            <li class="nav-item" *ngIf="!authService.isAuthenticated()">
-              <a class="nav-link" routerLink="/auth/login" routerLinkActive="active">Login</a>
-            </li>
-            <li class="nav-item" *ngIf="!authService.isAuthenticated()">
-              <a class="nav-link" routerLink="/auth/register" routerLinkActive="active">Register</a>
-            </li>
-            <li class="nav-item dropdown" *ngIf="authService.isAuthenticated()">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                {{ authService.getCurrentUser()?.name }}
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Profile</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
       </div>
     </div>
-  </nav>
+  </div>
+</nav>

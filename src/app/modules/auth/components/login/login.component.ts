@@ -6,7 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: []
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
@@ -20,13 +20,16 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
-  ) { 
-    if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/']);
-    }
-  }
+  ) {}
 
   ngOnInit(): void {
+    
+    this.authService.isLoggedIn$.subscribe(loggedIn => {
+      if (loggedIn) {
+        this.router.navigate(['/']);
+      }
+    });
+
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
@@ -40,20 +43,20 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
     this.submitted = true;
 
-    if (this.loginForm.invalid) {
-      return;
-    }
+    if (this.loginForm.invalid) return;
 
     this.loading = true;
+    this.error = '';
+
     this.authService.login(this.f['email'].value, this.f['password'].value)
-      .subscribe(
-        () => {
-          this.router.navigate([this.returnUrl]);
+      .subscribe({
+        next: () => {
+          this.router.navigateByUrl(this.returnUrl);
         },
-        error => {
-          this.error = error;
+        error: (err) => {
+          this.error = 'Email o contraseña incorrectos';
           this.loading = false;
         }
-      );
+      });
   }
 }
